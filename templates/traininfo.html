@@ -279,9 +279,15 @@
                     <div class="train-info {% if train.departure_in_minutes <= 1 %}blinking{% endif %}">
                         <div class="train-details">
                             <div class="train-icon">
+                                {% if train.route_name == 'Rockaway Shuttle' %}
+                                <img src="{{ url_for('static', filename='images/rockawayshuttle.svg') }}" 
+                                     alt="Rockaway Shuttle" 
+                                     class="train-image">
+                                {% else %}
                                 <img src="{{ url_for('static', filename='images/' + train.route_name|lower + '.svg') }}" 
                                      alt="Line {{ train.route_name }}" 
                                      class="train-image">
+                                {% endif %}
                             </div>
                             <div class="train-destination">
                                 to {{ train.destination }}
