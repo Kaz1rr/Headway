@@ -19,6 +19,7 @@
             text-align: center;
             font-size: 24px;
             margin-bottom: 30px;
+            text-shadow: 0 0 {{ glow_strength }}px {{ text_color }};
         }
 
         .back-link {
@@ -34,27 +35,28 @@
         }
 
         .station-list {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
             border: 2px solid {{ text_color }};
             box-shadow: 0 0 {{ glow_strength }}px {{ text_color }}, inset 0 0 {{ glow_strength }}px {{ text_color }};
             border-radius: 10px;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .station-row {
-            background-color: rgba(0, 255, 255, 0.1);
-            padding: 15px;
-            margin-bottom: 2px;
             display: block;
+            padding: 15px;
+            margin-bottom: 10px;
             text-decoration: none;
             color: {{ text_color }};
+            border: 1px solid {{ text_color }};
+            border-radius: 5px;
             transition: all 0.3s ease;
         }
 
         .station-row:hover {
-            background-color: rgba(0, 255, 255, 0.2);
-            transform: translateX(5px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 {{ glow_strength }}px {{ text_color }};
         }
 
         .station-info {
@@ -64,13 +66,26 @@
         }
 
         .train-image {
-            width: 35px;
-            height: 35px;
-            filter: drop-shadow(0 0 5px {{ text_color }});
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
         }
 
-        .station-row:hover .train-image {
-            filter: drop-shadow(0 0 10px {{ text_color }});
+        .shared-train-image {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            margin-left: 5px;
+        }
+
+        .station-name {
+            flex-grow: 1;
+        }
+
+        .shared-lines {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .footer {
@@ -94,14 +109,21 @@
                     <img src="{{ url_for('static', filename='images/' + line|lower + '.svg') }}" 
                          alt="{{ line }} Train" 
                          class="train-image">
-                    {{ stop.stop_name }}
+                    <span class="station-name">{{ stop.stop_name }}</span>
+                    {% if stop.shared_with %}
+                    <div class="shared-lines">
+                        {% for shared_line in stop.shared_with %}
+                        <img src="{{ url_for('static', filename='images/' + shared_line|lower + '.svg') }}" 
+                             alt="{{ shared_line }} Train" 
+                             class="shared-train-image">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
             </a>
             {% endfor %}
         {% else %}
-            <div class="station-row">
-                No stations available for this line.
-            </div>
+            <div class="alert alert-info">No stations available for this line.</div>
         {% endif %}
     </div>
 

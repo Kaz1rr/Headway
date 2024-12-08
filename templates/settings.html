@@ -9,7 +9,7 @@
         body {
             font-family: 'Press Start 2P', monospace;
             background-color: #000000;
-            color: {{ text_color }};
+            color: {{ settings.text_color }};
             padding: 20px;
             letter-spacing: 1px;
         }
@@ -18,14 +18,16 @@
             text-align: center;
             font-size: 24px;
             margin-bottom: 30px;
+            text-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
 
         .settings-container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            border: 2px solid {{ text_color }};
-            box-shadow: 0 0 {{ glow_strength }}px {{ text_color }}, inset 0 0 {{ glow_strength }}px {{ text_color }};
+            border: 2px solid {{ settings.text_color }};
+            box-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }}, 
+                       inset 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
             border-radius: 10px;
         }
 
@@ -36,6 +38,7 @@
         label {
             display: block;
             margin-bottom: 10px;
+            text-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
 
         input[type="color"],
@@ -54,26 +57,28 @@
         input[type="range"] {
             -webkit-appearance: none;
             height: 25px;
-            background: rgba(0, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
             outline: none;
+            border: 1px solid {{ settings.text_color }};
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 25px;
             height: 25px;
-            background: {{ text_color }};
+            background: {{ settings.text_color }};
             border-radius: 50%;
             cursor: pointer;
+            box-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
 
         .button {
             display: inline-block;
             padding: 15px 30px;
             background: none;
-            border: 2px solid {{ text_color }};
-            color: {{ text_color }};
+            border: 2px solid {{ settings.text_color }};
+            color: {{ settings.text_color }};
             font-family: 'Press Start 2P', monospace;
             font-size: 16px;
             cursor: pointer;
@@ -81,11 +86,24 @@
             margin: 10px;
             border-radius: 5px;
             transition: all 0.3s ease;
+            text-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
+        .styled-divider {
+        margin: 40px 0;
+        height: 2px;
+        background: linear-gradient(
+            to right,
+            transparent,
+            {{ settings.text_color }},
+            transparent
+        );
+        box-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
+    }
 
         .button:hover {
-            background-color: {{ text_color }};
+            background-color: {{ settings.text_color }};
             color: #000000;
+            box-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
 
         .buttons {
@@ -96,14 +114,17 @@
         .preview {
             margin-top: 20px;
             padding: 20px;
-            border: 2px solid {{ text_color }};
+            border: 2px solid {{ settings.text_color }};
             border-radius: 5px;
             text-align: center;
+            box-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }}, 
+                       inset 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
 
         #glow-value {
             text-align: center;
             margin-top: 10px;
+            text-shadow: 0 0 {{ settings.glow_strength }}px {{ settings.text_color }};
         }
     </style>
 </head>
@@ -113,7 +134,7 @@
     <div class="settings-container">
         <form method="POST">
             <div class="setting-group">
-                <label for="text_color">Text Color:</label>
+                <label for="text_color">Border & Text Color:</label>
                 <input type="color" id="text_color" name="text_color" value="{{ settings.text_color }}">
             </div>
 
@@ -143,25 +164,49 @@
             // Update preview
             const preview = document.querySelector('.preview');
             const textColor = document.getElementById('text_color').value;
-            preview.style.boxShadow = `0 0 ${value}px ${textColor}, inset 0 0 ${value}px ${textColor}`;
-            preview.style.borderColor = textColor;
-            preview.style.color = textColor;
+            const glowEffect = `0 0 ${value}px ${textColor}`;
+            const boxShadow = `${glowEffect}, inset ${glowEffect}`;
             
-            // Update all elements using the text color
+            // Update all elements
             document.body.style.color = textColor;
+            document.querySelector('h1').style.textShadow = glowEffect;
+            
             document.querySelectorAll('.button').forEach(button => {
                 button.style.borderColor = textColor;
                 button.style.color = textColor;
+                button.style.textShadow = glowEffect;
             });
+
+            document.querySelectorAll('label').forEach(label => {
+                label.style.textShadow = glowEffect;
+            });
+
+            document.querySelector('#glow-value').style.textShadow = glowEffect;
+            
+            // Update containers
             document.querySelector('.settings-container').style.borderColor = textColor;
-            document.querySelector('.settings-container').style.boxShadow = 
-                `0 0 ${value}px ${textColor}, inset 0 0 ${value}px ${textColor}`;
+            document.querySelector('.settings-container').style.boxShadow = boxShadow;
+            
+            preview.style.borderColor = textColor;
+            preview.style.color = textColor;
+            preview.style.boxShadow = boxShadow;
+            preview.style.textShadow = glowEffect;
+
+            // Update range input
+            const rangeInput = document.querySelector('input[type="range"]');
+            rangeInput.style.borderColor = textColor;
+            rangeInput.style.setProperty('--thumb-color', textColor);
         }
 
         // Add event listener for color changes
         document.getElementById('text_color').addEventListener('input', function(e) {
             updateGlowValue(document.getElementById('glow_strength').value);
         });
+
+        // Initialize preview with current settings
+        window.onload = function() {
+            updateGlowValue(document.getElementById('glow_strength').value);
+        };
     </script>
 </body>
 </html>
