@@ -203,7 +203,7 @@ def service(line):
 
 @app.route('/traininfo/<stop_id>')
 def train_info(stop_id):
-    lines_stations = parse_stops(r"C:\Users\Rezak\Documents\trainspotter\stops.txt")
+    lines_stations = parse_stops(r"stops.txt")
     stop_name = get_stop_name(stop_id)
     train_info = get_upcoming_trains_for_stop(stop_id, lines_stations)
     transfers = get_transfers_for_stop(stop_id)
@@ -232,14 +232,14 @@ def train_info(stop_id):
 
 @app.route('/get_stops/<service>', methods=['GET'])
 def get_stops(service):
-    lines_stations = parse_stops(r"C:\Users\Rezak\Documents\trainspotter\stops.txt")
+    lines_stations = parse_stops(r"stops.txt")
     stops = lines_stations.get(service, [])
     return jsonify(stops)
 
 @app.route('/search', methods=['POST'])
 def search():
     parent_station = request.form['parent_station']
-    lines_stations = parse_stops(r"C:\Users\Rezak\Documents\trainspotter\stops.txt")
+    lines_stations = parse_stops(r"stops.txt")
     
     train_info = get_upcoming_trains_for_stop(parent_station, lines_stations)
     transfers = get_transfers_for_stop(parent_station)
@@ -261,7 +261,7 @@ def search():
 @app.route('/get_train_info', methods=['GET'])
 def get_train_info():
     stop_id = request.args.get('stop_id')
-    lines_stations = parse_stops(r"C:\Users\Rezak\Documents\trainspotter\stops.txt")
+    lines_stations = parse_stops(r"stops.txt")
     
     train_info = get_upcoming_trains_for_stop(stop_id, lines_stations)
     stop_name = get_stop_name(stop_id)
@@ -297,4 +297,4 @@ def inject_settings():
     }
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001, host='0.0.0.0')
