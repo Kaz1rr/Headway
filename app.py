@@ -108,17 +108,6 @@ def get_upcoming_trains_for_stop(stop_id, lines_stations):
             destination = trip_info.get("destination", {}).get("name", "Unknown")
             headsign = stop_time.get("headsign", "Unknown")
             trip_id = trip_info.get("id", "Unknown")
-            
-            # Fetch the next stop after the current one for this trip
-            next_stop_url = f"https://demo.transiter.dev/systems/us-ny-subway/trips/{trip_id}/stop_times"
-            try:
-                next_stop_response = requests.get(next_stop_url)
-                next_stop_response.raise_for_status()
-                next_stop_data = next_stop_response.json()
-                next_stop = next_stop_data[1]["stop"]["name"] if len(next_stop_data) > 1 else None
-            except requests.exceptions.RequestException as e:
-                print(f"Error fetching next stop data for trip {trip_id}: {e}")
-                next_stop = None
 
             if destination == "Unknown":
                 destination = "No destination available"
@@ -136,8 +125,7 @@ def get_upcoming_trains_for_stop(stop_id, lines_stations):
                     "headsign": headsign,
                     "departure_time": departure_time,
                     "departure_in_minutes": int(minutes),
-                    "route_name": route_name,
-                    "next_stop": next_stop
+                    "route_name": route_name
                 }
                 all_train_info.append(train_info)
     

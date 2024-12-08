@@ -81,11 +81,6 @@
             min-width: 80px;
         }
 
-        .next-stop {
-            font-size: 12px;
-            margin-left: 20px;
-        }
-
         .no-trains {
             font-size: 14px;
             text-align: center;
@@ -299,11 +294,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                        {% if train.next_stop %}
-                            <div class="next-stop">
-                                Next: {{ train.next_stop }}
-                            </div>
-                        {% endif %}
                     </div>
                 {% endfor %}
             {% else %}
